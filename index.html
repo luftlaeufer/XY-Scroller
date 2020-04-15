@@ -7,7 +7,7 @@
     <title>scroll it</title>
 </head>
 
-<body>
+<body id="body">
 
     <section>
         <h1> Just a placeholder</h1>
@@ -18,15 +18,13 @@
     </section>
 
     <section class="stickyContainer">
-        <div class="outerScrollContainer">
-            <div class="scrollContainer">
-                <div class="scrollContainer__image scrollContainer__image--1"></div>
-                <div class="scrollContainer__image scrollContainer__image--2"></div>
-                <div class="scrollContainer__image scrollContainer__image--3"></div>
-                <div class="scrollContainer__image scrollContainer__image--4"></div>
-                <div class="scrollContainer__image scrollContainer__image--5"></div>
-                <div class="scrollContainer__image scrollContainer__image--6"></div>
-            </div>
+        <div class="scrollContainer">
+            <div class="scrollContainer__image scrollContainer__image--1"></div>
+            <div class="scrollContainer__image scrollContainer__image--2"></div>
+            <div class="scrollContainer__image scrollContainer__image--3"></div>
+            <div class="scrollContainer__image scrollContainer__image--4"></div>
+            <div class="scrollContainer__image scrollContainer__image--5"></div>
+            <div class="scrollContainer__image scrollContainer__image--6"></div>
         </div>
     </section>
 
@@ -61,16 +59,19 @@
     }
 
     .stickyContainer {
+        width: 100vw;
         height: 100vh;
+        min-height: 100vh;
         overscroll-behavior-y: none;
-    }
-
-    .outerScrollContainer {
-        overflow-x: hidden;
+        position: relative;
     }
 
     .scrollContainer {
-        position: relative;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         display: flex;
         overflow-x: hidden;
     }
@@ -125,6 +126,7 @@
     const images = document.querySelectorAll('.scrollContainer__image');
     let maxScroll = scrollContainer.clientWidth * (images.length - 1);
     let scrollSectionTop = scrollContainer.offsetTop;
+    let scrollSectionBottom = scrollContainer.offsetTop + scrollContainer.offsetHeight;
 
     const options = {
         rootMargin: '0px',
@@ -144,6 +146,7 @@
                     if (scrollContainer.scrollLeft >= maxScroll) {
                         stickyContainer.classList.remove('scrollContainer--locked');
                         scrollContainer.removeEventListener('wheel', _sideScroll);
+                        window.pageYOffset = scrollSectionBottom;
                     }
                 }
                 //left direction
@@ -153,15 +156,15 @@
                     if (scrollContainer.scrollLeft == 0 && scrollContainer.scrollLeft <= maxScroll) {
                         stickyContainer.classList.remove('scrollContainer--locked');
                         scrollContainer.removeEventListener('wheel', _sideScroll);
-                        //window.scrollY = scrollSectionTop;
+                        window.pageYOffset = scrollSectionTop;
                     }
                 }
 
             })
         }
         else {
-            stickyContainer.classList.remove('scrollContainer--locked');
-            window.scrollY = scrollSectionTop;
+            scrollContainer.classList.remove('scrollContainer--locked');
+            window.pageYOffset = scrollSectionTop;
         }
     }, options);
 
