@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scroll it</title>
+</head>
+
+<body>
+
+    <section>
+        <h1> Just a placeholder</h1>
+    </section>
+
+    <section>
+        <h1> Just a placeholder</h1>
+    </section>
+
+    <section class="stickyContainer">
+        <div class="outerScrollContainer">
+            <div class="scrollContainer">
+                <div class="scrollContainer__image scrollContainer__image--1"></div>
+                <div class="scrollContainer__image scrollContainer__image--2"></div>
+                <div class="scrollContainer__image scrollContainer__image--3"></div>
+                <div class="scrollContainer__image scrollContainer__image--4"></div>
+                <div class="scrollContainer__image scrollContainer__image--5"></div>
+                <div class="scrollContainer__image scrollContainer__image--6"></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h1> Just a placeholder</h1>
+    </section>
+
+</body>
+
+</html>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        overscroll-behavior-y: none;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 3vw;
+        padding: 40vh;
+        border: 1px dashed gray;
+    }
+
+    section {
+        min-height: 100vh;
+        width: 100%;
+        background: #ccc;
+        overscroll-behavior-y: none;
+    }
+
+    .stickyContainer {
+        height: 100vh;
+        overscroll-behavior-y: none;
+    }
+
+    .outerScrollContainer {
+        overflow-x: hidden;
+    }
+
+    .scrollContainer {
+        position: relative;
+        display: flex;
+        overflow-x: hidden;
+    }
+
+    .scrollContainer--locked {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        min-height: 100vh;
+        overflow-y: hidden;
+    }
+
+    .scrollContainer__image {
+        display: inline-block;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top;
+        min-width: 100vw;
+        min-height: 100vh;
+    }
+
+    .scrollContainer__image--1 {
+        background-image: url('./images/1.jpg');
+    }
+
+    .scrollContainer__image--2 {
+        background-image: url('./images/2.jpg');
+    }
+
+    .scrollContainer__image--3 {
+        background-image: url('./images/3.jpg');
+    }
+
+    .scrollContainer__image--4 {
+        background-image: url('./images/4.jpg');
+    }
+
+    .scrollContainer__image--5 {
+        background-image: url('./images/5.jpg');
+    }
+
+    .scrollContainer__image--6 {
+        background-image: url('./images/6.jpg');
+    }
+</style>
+
+<script>
+
+    const scrollContainer = document.querySelector('.scrollContainer');
+    const stickyContainer = document.querySelector('.stickyContainer');
+    const images = document.querySelectorAll('.scrollContainer__image');
+    let maxScroll = scrollContainer.clientWidth * (images.length - 1);
+    let scrollSectionTop = scrollContainer.offsetTop;
+
+    const options = {
+        rootMargin: '0px',
+        threshold: 0.98
+    }
+
+    const observer = new IntersectionObserver((scrollSection) => {
+
+        if (scrollSection[0].isIntersecting && scrollSection[0].intersectionRatio > 0.98) {
+            stickyContainer.classList.add('scrollContainer--locked');
+
+            scrollContainer.addEventListener('wheel', function _sideScroll(e) {
+
+                //right direction
+                if (e.deltaY >= 0) {
+                    scrollContainer.scrollLeft += e.deltaY;
+                    if (scrollContainer.scrollLeft >= maxScroll) {
+                        stickyContainer.classList.remove('scrollContainer--locked');
+                        scrollContainer.removeEventListener('wheel', _sideScroll);
+                    }
+                }
+                //left direction
+                if (e.deltaY <= 0) {
+                    scrollContainer.scrollLeft -= -e.deltaY;
+
+                    if (scrollContainer.scrollLeft == 0 && scrollContainer.scrollLeft <= maxScroll) {
+                        stickyContainer.classList.remove('scrollContainer--locked');
+                        scrollContainer.removeEventListener('wheel', _sideScroll);
+                        //window.scrollY = scrollSectionTop;
+                    }
+                }
+
+            })
+        }
+        else {
+            stickyContainer.classList.remove('scrollContainer--locked');
+            window.scrollY = scrollSectionTop;
+        }
+    }, options);
+
+    observer.observe(stickyContainer);
+
+
+
+</script>
